@@ -14,7 +14,8 @@ gauge(
   label = NULL,
   abbreviate = TRUE,
   abbreviateDecimals = 1,
-  href = NULL
+  href = NULL,
+  fontColor = "gray"
 )
 
 gaugeSectors(
@@ -45,7 +46,10 @@ default all values are colored using the "success" theme color}
 numbers to contain (defaults to 1).}
 
 \item{href}{An optional URL to link to. Note that this can be an anchor of
-another dashboard page (e.g. "#details").}
+ another dashboard page (e.g. "#details").
+@param ... additional JustGage options for controling the appearance of the
+gauge. For a complete list of options, see
+\href{https://github.com/toorshia/justgage#options}{https://github.com/toorshia/justgage#options}}
 
 \item{success}{Two-element numeric vector defining the range of values to
 color as "success" (specific color provided by theme or custom \code{colors})}

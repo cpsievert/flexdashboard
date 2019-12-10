@@ -1,0 +1,8 @@
+// Why does this deviate so much from the defaults?
+$sidebar-bg:    rgba($purple, 0.1) !default
+// It wasn't obvious from JJ's rgba() codes, but I think they should be $green?
+// https://github.com/rstudio/flexdashboard/commit/8da22b9#diff-1d0b35b137d5cbe09011be4437e7059dL19
+$primary-bg:          rgba($green, 0.3) !default;
+// TODO: was this for the frame
+$storyboard-frame-bg: rgba($green, 0.7) !default;
+$bt-color-nav-tab:    rgba($green, 1) !default;

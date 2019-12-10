@@ -128,12 +128,6 @@ flex_dashboard <- function(fig_width = 6.0,
       try(action())
   }
 
-  # function for resolving resources
-  resource <- function(name) {
-    system.file("rmarkdown/templates/flex_dashboard/resources", name,
-                package = "flexdashboard")
-  }
-
   # force self_contained to FALSE in devel mode
   if (devel)
     self_contained <- FALSE
@@ -162,11 +156,7 @@ flex_dashboard <- function(fig_width = 6.0,
   vertical_layout <- match.arg(vertical_layout)
   fill_page <- identical(vertical_layout, "fill")
 
-  # resolve theme
-  if (identical(theme, "default"))
-    theme <- "cosmo"
-  else if (identical(theme, "bootstrap"))
-    theme <- "default"
+  theme <- resolve_theme(theme)
 
   # resolve auto_reload
   if (resize_reload == 'no' | grepl("fa?l?s?e?", resize_reload, ignore.case = T))
@@ -227,7 +217,7 @@ flex_dashboard <- function(fig_width = 6.0,
 
   # knitr options hook to add mobile graphics device
 
-  # resovle fig_mobile
+  # resolve fig_mobile
   default_fig_mobile <- c(3.75, 4.80)
   if (is.logical(fig_mobile)) {
     if (isTRUE(fig_mobile))
@@ -303,60 +293,27 @@ flex_dashboard <- function(fig_width = 6.0,
     add_graphic("logo", logo)
     add_graphic("favicon", favicon)
 
-    # include flexdashboard.css and flexdashboard.js (but not in devel
-    # mode, in that case relative filesystem references to
-    # them are included in the template along with live reload)
+    # Include flexdashboard.js unless we're in devel mode.
+    # In that case, relative filesystem references to
+    # them are included in the template, along with live reload
     if (devel) {
       args <- c(args, pandoc_variable_arg("devel", "1"))
-      dashboardCss <- NULL
-      dashboardScript <- NULL
     } else {
-      if (fill_page) {
-        fillPageCss <- readLines(resource("fillpage.css"))
-      } else {
-        fillPageCss <- NULL
-      }
-
-      theme <- ifelse(identical(theme, "default"), "bootstrap", theme)
-      dashboardCss <- c(
-        '<style type="text/css">',
-        readLines(resource("flexdashboard.css")),
-        readLines(resource(paste0("theme-", theme, ".css"))),
-        fillPageCss,
-        '</style>'
-      )
-
-      dashboardScript <- c(
-        '<script type="text/javascript">',
-        readLines(resource("flexdashboard.js")),
-        '</script>'
-      )
+      dashboardScriptFile <- tempfile(fileext = ".html")
+      dashboardScript <- c('<script type="text/javascript">', readLines(resource("flexdashboard.js")), '</script>')
+      writeLines(dashboardScript, dashboardScriptFile)
+      includes$before_body <- c(includes$before_body, dashboardScriptFile)
     }
 
     # if there is no fig_mobile height and width then pass the default
     if (is.null(fig_mobile))
       fig_mobile <- default_fig_mobile
 
-    # css
-    if (!is.null(dashboardCss)) {
-      dashboardCssFile <- tempfile(fileext = "html")
-      writeLines(dashboardCss, dashboardCssFile)
-      args <- c(args, pandoc_include_args(in_header = dashboardCssFile))
-    }
-
-    # script
-    if (!is.null(dashboardScript)) {
-      dashboardScriptFile <- tempfile(fileext = ".html")
-      writeLines(dashboardScript, dashboardScriptFile)
-      includes$before_body <- c(includes$before_body, dashboardScriptFile)
-    }
-
     # dashboard init script
     dashboardInitScript <- c(
        '<script type="text/javascript">',
        '$(document).ready(function () {',
        '  FlexDashboard.init({',
-       paste0('    theme: "', theme, '",'),
        paste0('    fillPage: ', ifelse(fill_page,'true','false'), ','),
        paste0('    orientation: "', orientation, '",'),
        paste0('    storyboard: ', ifelse(storyboard,'true','false'), ','),
@@ -421,6 +378,13 @@ flex_dashboard <- function(fig_width = 6.0,
                                  list(html_dependency_jquery(),
                                       html_dependency_featherlight(),
                                       html_dependency_prism()))
+  }
+
+  if (is_bs_theme(theme)) {
+    dynamic_flexdb <- bslib::bs_dependency_defer(html_dependencies_flexdb)
+    theme <- bslib::bs_bundle(theme, sass::sass_layer(html_deps = dynamic_flexdb))
+  } else {
+    extra_dependencies <- append(extra_dependencies, html_dependencies_flexdb(theme, fill_page = fill_page))
   }
 
   # return format
@@ -616,3 +580,53 @@ storyboard_dependencies <- function(source = NULL) {
 }
 
 
+html_dependencies_flexdb <- function(theme, fill_page = TRUE) {
+  name <- "flexdashboard-css"
+  version <- packageVersion("flexdashboard")
+
+  if (is.character(theme)) {
+    dep <- htmltools::htmlDependency(
+      name = name, version = version,
+      src = "rmarkdown/templates/flex_dashboard/resources",
+      package = "flexdashboard",
+      stylesheet = c(
+        if (fill_page) "fillpage.css",
+        "flexdashboard.css",
+        paste0("theme-", theme, ".css")
+      )
+    )
+    return(list(dep))
+  }
+
+  if (is_bs_theme(theme)) {
+    bsw <- bslib::theme_bootswatch(theme)
+    input <- list(
+      resource_sass(file.path(bsw, "_defaults.scss")),
+      resource_sass("_defaults.scss"),
+      resource_sass(file.path(bsw, "_declarations.scss")),
+      resource_sass("_declarations.scss"),
+      resource_sass("_rules.scss"),
+      resource_sass(file.path(bsw, "_rules.scss"))
+    )
+    return(bslib::bs_dependency(
+      input, theme = theme,
+      name = name, version = version,
+      cache_key_extra = version
+    ))
+  }
+
+  stop("Didn't recognize a theme object with class: ", class(theme))
+}
+
+
+# Not every flexdb-theme dir has variables.scss and post.scss
+resource_sass <- function(file) {
+  file <- resource(file)
+  if (file.exists(file)) sass::sass_file(file) else ""
+}
+
+# function for resolving resources
+resource <- function(name) {
+  system.file("rmarkdown/templates/flex_dashboard/resources", name,
+              package = "flexdashboard")
+}

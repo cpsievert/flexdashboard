@@ -7,6 +7,17 @@ flexdashboard 0.5.2.9000
 flexdashboard 0.5.2
 ===========
 
+* The CSS framework behind `flexdashboard::flex_dashboard` now uses Bootstrap 4. With this change comes many new features and improvements, most of which is related to styling:
+  * New `theme`s such as: minty, sketchy, solar, lux, and pulse.
+  * Better default styling for dark themes such flatly
+  * Control styling from R through SASS variables (TODO: link to a vignette?)
+    * Control size of margins within or across rows or columns.
+  * Control styling using Bootstrap utility classes
+    * Add `.bg-primary` and `.text-white` to make cards "pop"
+* More control over the styling of `valueBox()`/`gauge()`:
+  * `valueBox()` gains `colorText` and `colorIcon` arguments.
+  * `gauge()` gains a `fontColor` argument.
+  
 * Support use of Font Awesome icon sets (e.g. "fab fa-r-project")
 
 * Fixed [#245](https://github.com/rstudio/flexdashboard/issues/245): Shiny (1.4.0+) outputs not rendering in modified flexdashboard html. ([#250](https://github.com/rstudio/flexdashboard/pull/250))

@@ -1,0 +1,6 @@
+// TODO: could maybe use color-yiq() mixin here (globally)?
+.nav-tabs-custom > .nav-tabs > li > a {
+  border-top-color: $white;
+  border-right-color: $white;
+  border-left-color: $white;
+}

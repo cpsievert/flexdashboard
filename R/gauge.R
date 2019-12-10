@@ -27,6 +27,9 @@
 #'   numbers to contain (defaults to 1).
 #' @param href An optional URL to link to. Note that this can be an anchor of
 #'   another dashboard page (e.g. "#details").
+#'  @param ... additional JustGage options for controling the appearance of the
+#'  gauge. For a complete list of options, see
+#'  \href{https://github.com/toorshia/justgage#options}{https://github.com/toorshia/justgage#options}
 #'
 #' @details See the flexdashboard website for additional documentation:
 #'  \href{http://rmarkdown.rstudio.com/flexdashboard/using.html#gauges}{http://rmarkdown.rstudio.com/flexdashboard/using.html#gauges}
@@ -42,7 +45,7 @@
 gauge <- function(value, min, max, sectors = gaugeSectors(),
                   symbol = NULL, label = NULL,
                   abbreviate = TRUE, abbreviateDecimals = 1,
-                  href = NULL) {
+                  href = NULL, fontColor = "gray") {
 
   x <- list(
     value = value,
@@ -53,7 +56,8 @@ gauge <- function(value, min, max, sectors = gaugeSectors(),
     label = label,
     humanFriendly = abbreviate,
     humanFriendlyDecimal = abbreviateDecimals,
-    href = href
+    href = href,
+    fontColor = fontColor
   )
 
   # create widget

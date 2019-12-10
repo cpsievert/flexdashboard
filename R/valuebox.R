@@ -11,6 +11,8 @@
 #'   any valid CSS color value.
 #' @param href An optional URL to link to. Note that this can be an anchor of
 #'   another dashboard page (e.g. "#details").
+#' @param colorText Text font color. Use any valid CSS color value.
+#' @param colorIcon Icon font color. Use any valid CSS color value.
 #'
 #' @details See the flexdashboard website for additional documentation:
 #'  \href{http://rmarkdown.rstudio.com/flexdashboard/using.html#value_boxes}{http://rmarkdown.rstudio.com/flexdashboard/using.html#value_boxes}
@@ -25,9 +27,18 @@
 #' @export
 valueBox <- function(value, caption = NULL, icon = NULL, color = NULL, href = NULL) {
 
-  # resolve background color
-  if (!is.null(color) && color %in% c("primary", "info", "success", "warning", "danger"))
+  # If bg color is an accent color, the fg color should be handled by the utility class; otherwise, we include properly contrasted fg colors
+  if (isTRUE(color %in% c("primary", "info", "success", "warning", "danger"))) {
     color <- paste0("bg-", color)
+    colorText <- NULL
+    colorIcon <- NULL
+  } else {
+    color <- htmltools::parseCssColors(color)
+    colorText <- get_color_contrast(color)
+    colorIcon <- get_color_contrast(colorText)
+    colorIconRGB <- col2rgb(htmltools::parseCssColors(colorIcon))
+    colorIcon <- sprintf("rgba(%s,%s,%s,0.15)", colorIconRGB[1,1], colorIconRGB[2,1], colorIconRGB[3,1])
+  }
 
   # build the value output
   valueOutput <- tags$span(class="value-output",
@@ -35,6 +46,8 @@ valueBox <- function(value, caption = NULL, icon = NULL, color = NULL, href = NU
             `data-icon` = icon,
             `data-color` = color,
             `data-href` = href,
+            `data-color-text` = colorText,
+            `data-color-icon` = colorIcon,
     value
   )
 

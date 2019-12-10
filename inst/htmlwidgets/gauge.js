@@ -7,42 +7,41 @@ HTMLWidgets.widget({
   factory: function(el, width, height) {
 
     var justgage = null;
+    var css_styles = getComputedStyle(document.body);
 
     return {
 
       renderValue: function(x) {
 
-        // resolve theme colors for sectors
-        function themeColor(colorName, defaultColor) {
-          // just in case someone tries to use this outside of flexdashboard
-          if (window.FlexDashboard) {
-            var color = window.FlexDashboard.themeColor(colorName);
-            if (!color)
-              color = defaultColor;
-            return color;
-          } else {
-            return defaultColor;
-          }
+        // If a gauge's sector color is a semantic bootstrap class, then
+        // look for a corresponding css variable that matches the (muted)
+        // background color that flexdb uses for things like valueBox(),
+        // but allow a default color to be used (so that gauge() is self-contained)
+        function bgColor(colorName, defaultColor) {
+          var css_variable = css_styles.getPropertyValue("--" + colorName + "-bg");
+          return (css_variable==="") ? defaultColor : css_variable;
         }
+
         for (var i=0; i<x.customSectors.length; i++) {
           var sector = x.customSectors[i];
           if (sector.color === "primary")
-            sector.color = themeColor("primary",  "#a9d70b");
+            sector.color = bgColor("primary", "#a9d70b");
           else if (sector.color === "info")
-            sector.color = themeColor("info",  "#a9d70b");
+            sector.color = bgColor("info", "#a9d70b");
           else if (sector.color === "success")
-            sector.color = themeColor("success",  "#a9d70b");
+            sector.color = bgColor("success", "#a9d70b");
           else if (sector.color === "warning")
-            sector.color = themeColor("warning",  "#f9c802");
+            sector.color = bgColor("warning", "#f9c802");
           else if (sector.color === "danger")
-            sector.color = themeColor("danger", "#ff0000");
+            sector.color = bgColor("danger", "#ff0000");
         }
 
         // justgage config
         var config = {
           id: el.id,
           title: " ",
-          valueFontColor: "gray",
+          valueFontColor: x.fontColor,
+          labelFontColor: x.fontColor,
           value: x.value,
           min: x.min,
           max: x.max,

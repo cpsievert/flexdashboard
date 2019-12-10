@@ -1,0 +1,122 @@
+/*
+* General spacing/margins
+*/
+
+// Margin spacing across row/column orientation
+$column-margin: 0.75rem !default;
+$row-margin:    1rem !default;
+// Margin spacing within row/column orientation
+// Use this to add padding between charts, value boxes, etc
+$column-margin-within: $column-margin !default;
+$row-margin-within:    $row-margin !default;
+
+/*
+* Navbar styling
+*/
+
+// If truthy, this is used as an inline style
+$navbar-bg:  null !default;
+
+
+/*
+* Navs styling
+*/
+$nav-tabs-font-weight: 300 !default;
+
+
+/*
+* Sidebar styling
+*/
+
+$sidebar-bg:           rgba($primary, 0.1) !default;
+$sidebar-border-width: $border-width !default;
+$sidebar-border-color: $border-color !default;
+$sidebar-padding:      1rem !default;
+
+/*
+* Simple table styling
+*/
+
+$table-hover:      false !default;
+$table-striped:    true !default;
+$table-dark:       false !default;
+// Use null for no type
+$table-thead-type: light !default;
+
+
+
+/*
+* Muted background colors
+*/
+
+$primary-bg: rgba($primary, 0.7) !default;
+$info-bg:    rgba($info, 0.7) !default;
+$warning-bg: rgba($warning, 0.7) !default;
+$danger-bg:  rgba($danger, 0.7) !default;
+$success-bg: rgba($success, 0.7) !default;
+
+// Export these vars since gauges want to inherit them (if available)
+:root {
+  --primary-bg: #{$primary-bg};
+  --info-bg:    #{$info-bg};
+  --warning-bg: #{$warning-bg};
+  --danger-bg:  #{$danger-bg};
+  --success-bg: #{$success-bg};
+}
+
+/*
+* Storyboard styling
+* TODO: make some variables that control both frame and commentary styling
+*/
+
+$storyboard-frame-height:        120px !default;
+$storyboard-frame-width:         270px !default;
+$storyboard-frame-bg:            $card-bg !default;
+$storyboard-frame-color:         color-yiq($storyboard-frame-bg) !default;
+$storyboard-frame-bg-active:     rgba($primary, 0.7) !default;
+$storyboard-frame-color-active:  color-yiq($storyboard-frame-bg-active) !default;
+$storyboard-frame-text-align:    left !default;
+$storyboard-frame-font-size:     $font-size-base !default;
+$storyboard-frame-padding:       0.5rem !default
+$storyboard-frame-border-width:  $border-width !default;
+$storyboard-frame-border-color:  $border-color !default;
+$storyboard-frame-border-radius: $border-radius !default;
+$storyboard-frame-overflow:      hidden !default;
+$storyboard-frame-cursor:        pointer !default;
+
+$storyboard-commentary-width:         300px !default;
+$storyboard-commentary-bg:         $card-bg !default;
+$storyboard-commentary-color:        color-yiq($storyboard-commentary-bg) !default;
+$storyboard-commentary-font-size:     $font-size-base !default;
+$storyboard-commentary-border-width:  $border-width !default;
+$storyboard-commentary-border-color:  $border-color !default;
+$storyboard-commentary-border-radius: $border-radius !default;
+
+$storyboard-arrow-font-size:           3rem !default;
+
+/*
+* Value Boxes
+*/
+
+$value-box-value-size:         2.5rem !default;
+$value-box-value-weight:       bold !default;
+$value-box-icon-size:          5rem !default;
+$value-box-caption-size:       1.2rem !default;
+$value-box-small-caption-size: 0.85 * $value-box-caption-size !default;
+$value-box-border-radius:      2px !default;
+$value-box-column-margin:      $column-margin-within !default;
+$value-box-row-margin:         $row-margin-within !default;
+$value-box-shadow:             $box-shadow !default;
+
+
+
+// TODO: Revamp nav-tab CSS model?
+$bt-color-nav-tab: rgba($primary, 0.7) !default;
+
+
+
+@mixin border($width, $color) {
+  border: $width solid $color;
+  border-bottom: $width solid $color;
+  border-top: $width solid $color;
+}

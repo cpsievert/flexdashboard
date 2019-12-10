@@ -1,0 +1,18 @@
+//.nav-tabs > li > a:hover,
+//.nav-tabs > li > a:focus,
+//.nav-tabs > li.active > a,
+//.nav-tabs > li.active > a:hover,
+//.nav-tabs > li.active > a:focus,
+//.nav-tabs .open > a,
+//.nav-tabs .open > a:hover,
+//.nav-tabs .open > a:focus {
+//  padding-bottom: 5px;
+//  margin-top: 0;
+//}
+
+// TODO: Is this needed?
+.nav-tabs-custom > .nav-tabs > li > a {
+  border-top-color: $white;
+  border-right-color: $white;
+  border-left-color: $white;
+}
